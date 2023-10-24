@@ -692,7 +692,7 @@ void calculateExpRMSD(const std::string &desc, F func)
         currentValue = nextafterf(currentValue, maxValue);
         count++;
 
-        auto ref = log2f(currentValue);
+        auto ref = log2(currentValue);
         auto cal = func(currentValue);
         double vidn = (double)(double(cal)- double(ref)) ;              /*** błąd bezwzględny - Absolut Error  ****/
         maxPoh = std::max(maxPoh, vidn);
@@ -723,7 +723,7 @@ void calculateExpRMSD_half(const std::string &desc, F func) {
         currentValue = half_float::nextafter(currentValue, maxValue);
         count++;
 
-        auto ref = log2f(currentValue);
+        auto ref = log2(currentValue);
         auto cal = func(currentValue);
         double vidn = (double) (double(cal) - double(ref));              /*** błąd bezwzględny - Absolut Error  ****/
         /* double vidn = (double)(double(cal) / double(ref)) - 1; */   /**** relative Error ****/
