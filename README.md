@@ -1,8 +1,6 @@
 # LOGARITHM APPROXIMATION   FUNCTIONS
 
-In this repository you can find all code examples used in the article:
-
-*"Innovative simple yet efficient algorithms of logarithms with adjustable accuracy"*
+Original code accompanying the Research Square preprint "Innovative simple yet efficient algorithms of logarithms with adjustable accuracy" (October 2023). Archived for reference; superseded by later releases.
 
 **By:**
 
