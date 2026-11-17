@@ -1,0 +1,12 @@
+function,ns_per_call
+empty_call,2.05
+logq_A1_16u,5.90
+logq_A2_16u,6.31
+logq_A2_16g,10.09
+logq_A3_16u,7.10
+logq_R2_16,4.74
+logq_R3_16,8.04
+legacy_log2_P3_16,2.06
+aor_log2f,2.55
+fbsd_log2f,4.50
+libm_log2f,2.28

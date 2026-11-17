@@ -1,0 +1,13 @@
+build/
+bench/build/
+paper/gen/
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.out
+paper/*.pdf
+paper/elsarticle.cls
+__pycache__/

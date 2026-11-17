@@ -1,0 +1,2 @@
+A2_16u_q23_u32 over all v in [1, 2^32): error in [-3.576e-06, 3.408e-06]
+all special-value tests passed
