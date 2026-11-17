@@ -11,3 +11,4 @@ paper/*.out
 paper/*.pdf
 paper/elsarticle.cls
 __pycache__/
+.DS_Store
