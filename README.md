@@ -101,7 +101,7 @@ pip install unicorn && python3 bench/emu.py
 The first version of this code accompanied the 2023 preprint *Innovative
 simple yet efficient algorithms of logarithms with adjustable accuracy*
 (Research Square); it is preserved unchanged under the tag
-[`v0.1-preprint`](https://github.com/pawelgepner/Logarithm/tree/v0.1-preprint)
+https://github.com/pawelgepner/Logarithm/releases/tag/v0.1-preprint
 and in `baselines/legacy/`. Version 1.0 replaces it with a generator, integer
 kernels, full-domain handling and exhaustive verification. The speed-ups of
 3–20× over C libraries reported in the preprint came from a benchmark that
