@@ -20,17 +20,15 @@
 
 \title{logq: integer-only binary logarithms with verified error bounds for processors without a floating-point unit}
 
-\author[pw]{Pawe{\l} Gepner\corref{cor}}
-\ead{pawel.gepner@pw.edu.pl}
+\author[usc]{Ewa Deelman\corref{cor}}
+\ead{deelman@isi.edu}
+\author[pw]{Pawel Gepner}
 \author[pw]{Leonid Moroz}
-\author[pk]{Volodymyr Samotyy}
-\author[pk]{Zbigniew Koko{\'s}i{\'n}ski}
-\author[pw]{Nataliia Gavkalova}
-\author[amd]{Bart{\l}omiej Kocot}
+\author[pk]{Pawel Poczekajlo}
 \cortext[cor]{Corresponding author}
+\address[usc]{University of Southern California, Information Sciences Institute, Marina del Rey, 90292, CA, USA}
 \address[pw]{Warsaw University of Technology, Faculty of Mechanical and Industrial Engineering, 02-524 Warszawa, Poland}
-\address[pk]{Cracow University of Technology, Faculty of Electrical and Computer Engineering, 31-155 Krak{\'o}w, Poland}
-\address[amd]{AMD Inc., USA}
+\address[pk]{Koszalin University of Technology, Faculty of Electronics and Computer Science, 75-453, Koszalin, Poland}
 
 \begin{abstract}
 Small processors without a floating-point unit compute logarithms for sound
@@ -42,9 +40,11 @@ polynomials, tunable in degree and number of segments, returns log$_2$ in
 fixed point with a guaranteed absolute error between \numEmax{} and
 \numEmin{}; a second family bounds the relative error, down to 0.54~ulp of
 binary32. The generator verifies every variant it emits on all $2^{23}$
-significands, and the test suite checks every positive binary32 input. On
+significands, and the test suite checks every positive binary32 input. \authors {On
 RV32IM and Cortex-M0 a full-domain binary32 logarithm takes \numinsmin--\numinsmax{}
-instructions, \numratmin--\numratmax{} times fewer than \texttt{log2f}.
+instructions, \numratmin--\numratmax{} times fewer than \texttt{log2f}.}
+On an ESP32-C3 microcontroller (RV32IMC) the fixed-point logarithm takes 65
+clock cycles, against 3430 for the \texttt{log2f} of the toolchain's C library.
 \end{abstract}
 
 \begin{keyword}
@@ -63,8 +63,8 @@ C2 & Permanent link to code/repository used for this code version & \url{https:/
 C3 & Permanent link to Reproducible Capsule & \authors{optional, e.g.\ Code Ocean capsule} \\
 C4 & Legal Code License & MIT \\
 C5 & Code versioning system used & git \\
-C6 & Software code languages, tools, and services used & C99, Python 3 (NumPy); CMake; clang/lld and Unicorn for the benchmarks; GitHub Actions \\
-C7 & Compilation requirements, operating environments \& dependencies & Any C99 compiler; no run-time dependencies. Generator: Python $\ge$3.8 with NumPy. Benchmarks: clang with RISC-V and Arm targets, LLVM compiler-rt sources, Python package \texttt{unicorn} \\
+C6 & Software code languages, tools, and services used & C99, Python 3 (NumPy); CMake; clang/lld and Unicorn for the emulated benchmarks; ESP-IDF for the hardware benchmark; GitHub Actions \\
+C7 & Compilation requirements, operating environments \& dependencies & Any C99 compiler; no run-time dependencies. Generator: Python $\ge$3.8 with NumPy. Benchmarks: clang with RISC-V and Arm targets, LLVM compiler-rt sources, Python package \texttt{unicorn}; ESP-IDF 5.x for the ESP32-C3 benchmark \\
 C8 & If available Link to developer documentation/manual & \url{https://github.com/pawelgepner/Logarithm\#readme} \\
 C9 & Support email for questions & pawel.gepner@pw.edu.pl \\
 \bottomrule
@@ -120,7 +120,8 @@ logq has three parts (Fig.~\ref{fig:arch}):
   do not want to run the generator;
 \item the verification and benchmark suite in \texttt{tests/} and
   \texttt{bench/}, which re-checks the headers independently of the generator
-  and measures their cost on emulated FPU-less cores.
+  and measures their cost on emulated FPU-less cores and, with the ESP-IDF
+  project in \texttt{bench/hw/esp32c3}, on a real microcontroller.
 \end{itemize}
 
 \begin{figure}[t]
@@ -131,7 +132,7 @@ logq has three parts (Fig.~\ref{fig:arch}):
 \node[box] (h) at (4.3,0) {C99 header\\\texttt{logq\_V\_*()}};
 \node[box] (a) at (8.6,0) {application\\(any C99 compiler)};
 \node[box] (t) at (2.15,-2.0) {\texttt{tests/}: binary32,\\Q31, special values};
-\node[box] (b) at (6.45,-2.0) {\texttt{bench/}: RV32IM,\\Cortex-M0 emulation};
+\node[box] (b) at (6.45,-2.0) {\texttt{bench/}: RV32IM, Cortex-M0\\emulation; ESP32-C3};
 \draw[->] (g) -- (h); \draw[->] (h) -- (a); \draw[->] (h) -- (t); \draw[->] (h) -- (b);
 \end{tikzpicture}
 \caption{Components of logq.}
@@ -164,7 +165,11 @@ error. It writes $\log_2(1+z) = z\,q(z)$ with $q(z)=\log_2(1+z)/z$, takes
 $z=m$ for $m<\sqrt2-1$ and $z=(m-1)/2$ with $e+1$ otherwise, approximates
 $q$ by the same piecewise scheme, and forms $e+z\,q(z)$ in 64-bit fixed point
 before a single rounding to binary32. The result is exact at all powers of two
-and has a bounded relative error.
+and has a bounded relative error. With 32 segments it matches the binary32
+\texttt{log2f} of Arm Optimized Routines, the implementation used by musl and
+glibc \cite{aor}: \texttt{R3\_32} returns the same result for 99.98\% of all
+positive binary32 inputs and differs by one ulp for the remaining 405\,402,
+while using integer operations only.
 
 \subsection{Generator and verification}
 
@@ -309,6 +314,49 @@ Function & Max.\ error & RMS error & RV32IM & Cortex-M0 & Bytes (M0) \\
 \end{tabular}
 \end{table}
 
+\subsection{Measurements on a microcontroller}
+The kernel \texttt{A3\_16u} was also run on an ESP32-C3 board (RV32IMC,
+160~MHz, no FPU) \authors{add board name, ESP-IDF version, compiler and
+flags}. On the board the kernel was evaluated on all $2^{23}$ significands; its
+results are bit for bit identical to those on a PC, with the same maximum
+error of $9.86\cdot10^{-8}$. Table~\ref{tab:esp} gives the clock cycles per
+call, averaged over 1000 arguments, after subtracting the cost of an empty
+call (10.2 cycles). Code placed in flash and in RAM gave the same results and
+nearly the same times, because the core executes from a cache. The
+logarithm needs 132 bytes of code and 256 bytes of tables.
+
+\begin{table}[t]
+\centering\small
+\caption{Clock cycles per call on ESP32-C3 (RV32IMC, 160~MHz), mean over 1000
+arguments, net of the call overhead.}
+\label{tab:esp}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Function & Cycles \\
+\midrule
+\texttt{A3\_16u}, Q8.23 result & 65 \\
+\texttt{A3\_16u}, converted to binary32 by soft-float division & 292 \\
+\texttt{A3\_16u}, converted to binary32 by integer packing & \authors{to be measured} \\
+\texttt{log2f} of the toolchain's C library & 3430 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The fixed-point result is 53 times cheaper than \texttt{log2f}. Converting it
+to binary32 with an ordinary floating-point division costs more than the
+logarithm itself, because the division is emulated in software; the integer
+packing used by \texttt{logq\_V\_f32bits} avoids this. The board also shows
+an accuracy effect of the output format. Q8.23 has a fixed resolution of
+$2^{-23}$, while binary32 results with $|\log_2 x|\ge2$ are spaced at least
+$2^{-22}$ apart. For $x=12345$ the library \texttt{log2f} on the board
+returned $13.59163857$, $6.5\cdot10^{-7}$ from the exact value, while the
+Q8.23 result $13.59163916$ was within $6\cdot10^{-8}$. Applications that keep
+the logarithm in fixed point therefore gain accuracy as well as speed.
+\authors{Replace or extend Table~\ref{tab:esp} with the full set of functions
+measured by \texttt{bench/hw/esp32c3} (all variants, Arm Optimized Routines,
+FreeBSD, CMSIS-DSP, 2023 algorithms), which also checks every result against
+the PC.}
+
 \section{Impact}
 
 logq makes the cost of a logarithm on an FPU-less core a design parameter
@@ -335,16 +383,18 @@ Two limitations are stated explicitly. On processors with hardware floating
 point, logq is not faster than the C library (on an x86-64 host it is
 \numhostmin--\numhostmax{} times slower, \texttt{results/host\_x86\_64.csv}). Instruction counts
 are not cycle counts: they ignore memory wait states and multiplier latency.
-\authors{Add time and energy per call measured on physical boards, e.g.\
-ESP32-C3 (RV32IMC) and a Cortex-M0+ part, using \texttt{bench/mcu\_funcs.c}.}
+The first measurements on an ESP32-C3 confirm on a real core that the integer
+kernel is more than an order of magnitude cheaper than \texttt{log2f}. \authors{Add a Cortex-M0+ board and energy per call.}
 
 \section{Conclusions}
 
 logq provides integer-only binary logarithms whose accuracy is chosen by the
 user and whose worst-case error is verified exhaustively for every variant it
-emits. On RV32IM and Cortex-M0 a full-domain binary32 logarithm costs
+emits. \authors{On RV32IM and Cortex-M0 a full-domain binary32 logarithm costs
 \numinsmin--\numinsmax{} instructions, \numratmin--\numratmax{} times fewer than \texttt{log2f} with
-soft-float, and a fixed-point result for an integer input as little as \numintrv. The software,
+soft-float, and a fixed-point result for an integer input as little as \numintrv.} On an
+ESP32-C3 board the fixed-point logarithm takes 65 cycles, 53 times fewer than
+\texttt{log2f}, with results identical to those on a PC. The software,
 including the generator, the exhaustive tests, the emulation harness and the
 scripts that produce every number in this paper, is available under the MIT
 licence. Planned extensions are the inverse function $2^x$ in the same
