@@ -1,7 +1,6 @@
 MIT License
 
-Copyright (c) 2023-2026 Paweł Gepner, Leonid Moroz, Volodymyr Samotyy,
-Zbigniew Kokosiński, Nataliia Gavkalova, Bartłomiej Kocot
+Copyright (c) 2026 Ewa Deelman, Paweł Gepner, Leonid Moroz, Paweł Poczekajło
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -------------------------------------------------------------------------------
-The files in baselines/ are third-party code used only for comparison and are
-NOT part of the logq library; each keeps its own licence (see
+Earlier code (2023)
+
+The logq library is a new implementation written in 2026. It generalises the
+approach of the original 2023 code by Paweł Gepner, Leonid Moroz,
+Volodymyr Samotyy, Zbigniew Kokosiński, Nataliia Gavkalova and
+Bartłomiej Kocot. That code is kept unchanged in baselines/legacy/ for
+reference and comparison and is distributed under its own copyright notice
+(baselines/legacy/LICENSE).
+
+Third-party code
+
+The other files in baselines/ are third-party code used only for comparison
+and are NOT part of the logq library; each keeps its own licence (see
 baselines/README.md).
