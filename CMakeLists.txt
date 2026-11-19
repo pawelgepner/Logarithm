@@ -16,7 +16,7 @@ if(LOGQ_BUILD_TESTS)
   find_package(OpenMP COMPONENTS C)
   set(CMAKE_C_STANDARD 11)
 
-  foreach(t test_kernel test_special test_q31_ln test_float test_baselines)
+  foreach(t test_kernel test_special test_q31_ln test_float test_baselines test_r3_vs_aor)
     add_executable(${t} tests/${t}.c)
     target_link_libraries(${t} PRIVATE logq ${M_LIB})
     if(OpenMP_C_FOUND AND NOT (t STREQUAL "test_kernel" OR t STREQUAL "test_special"))

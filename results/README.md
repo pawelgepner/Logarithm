@@ -12,5 +12,6 @@ guest, 2 cores; emulation: clang 18.1.3, compiler-rt 18.1.3, Unicorn 2.1.4).
 | `special_values.txt` | `tests/test_special.c` | special values, integer entry point over all 2^32-1 inputs |
 | `baselines_exhaustive.csv` | `tests/test_baselines.c` | Arm Optimized Routines, FreeBSD and 2023 algorithms over all positive binary32 |
 | `q31_ln_vs_cmsis.csv` | `tests/test_q31_ln.c` | natural log of all Q31 inputs, logq vs CMSIS-DSP |
+| `r3_32_vs_aor.txt` | `tests/test_r3_vs_aor.c` | R3_32 vs Arm Optimized Routines log2f, bit for bit, all positive binary32 |
 | `mcu_instructions.csv` | `bench/emu.py --n 1000` | executed instructions and footprint on RV32IM and Cortex-M0 |
 | `host_x86_64.csv` | `bench/bench_host.c` | ns per call on the host (reference only) |
