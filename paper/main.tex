@@ -335,7 +335,7 @@ arguments, net of the call overhead.}
 Function & Cycles \\
 \midrule
 \texttt{A3\_16u}, Q8.23 result & 65 \\
-\texttt{A3\_16u}, converted to binary32 by soft-float division & 292 \\
+\texttt{A3\_16u}, converted to binary32 by soft-float arithmetic & 292 \\
 \texttt{A3\_16u}, converted to binary32 by integer packing & \authors{to be measured} \\
 \texttt{log2f} of the toolchain's C library & 3430 \\
 \bottomrule
@@ -343,9 +343,19 @@ Function & Cycles \\
 \end{table}
 
 The fixed-point result is 53 times cheaper than \texttt{log2f}. Converting it
-to binary32 with an ordinary floating-point division costs more than the
-logarithm itself, because the division is emulated in software; the integer
-packing used by \texttt{logq\_V\_f32bits} avoids this. The board also shows
+to binary32 in the usual way, \texttt{q * (1.0f / 8388608.0f)}, raises the
+cost to 292 cycles. No division is executed: the compiler folds $1/2^{23}$
+into a constant at compile time. The overhead of about 227 cycles, more than
+three times the cost of the logarithm, comes from the two soft-float routines
+that remain, the integer-to-float conversion (\texttt{\_\_floatsisf}) and the
+multiplication (\texttt{\_\_mulsf3}). The conversion itself is cheap when it
+is done with integers: \texttt{logq\_V\_f32bits} normalises the Q8.23 value by
+counting leading zeros, applies the scaling by $2^{-23}$ as a subtraction from
+the exponent and rounds the significand to nearest even, with the same
+correctly rounded result. On cores without an FPU it therefore pays to keep
+the computation in fixed point and, where a binary32 interface is needed, to
+pack the result with integer operations rather than through soft-float
+arithmetic. The board also shows
 an accuracy effect of the output format. Q8.23 has a fixed resolution of
 $2^{-23}$, while binary32 results with $|\log_2 x|\ge2$ are spaced at least
 $2^{-22}$ apart. For $x=12345$ the library \texttt{log2f} on the board
