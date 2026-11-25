@@ -8,6 +8,11 @@
  * and an FNV-1a checksum of all 1000 results compared with the value computed
  * on a PC (expected.h).  Output: lines starting with "CSV," on the console.
  */
+#if defined(ARDUINO) && !defined(LOGQ_BENCH_KEEP_FLAGS)
+/* The Arduino IDE may build sketches with -Og (Sketch > Optimize for
+ * Debugging).  Force the -O2 used by the ESP-IDF project and the emulation. */
+#pragma GCC optimize ("O2")
+#endif
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -43,7 +48,8 @@ NOINL static uint32_t f_R3_32(uint32_t b)  { return logq_R3_32_f32bits(b); }
 /* logq A3_16u: Q8.23 result, then two ways of turning it into a float */
 NOINL static uint32_t q_A3_16u(uint32_t b) { return (uint32_t)logq_A3_16u_q23(b); }
 NOINL static uint32_t q_A3_16u_softfloat(uint32_t b)
-{ return f2u((float)logq_A3_16u_q23(b) / 8388608.0f); }       /* via soft-float */
+{ return f2u((float)logq_A3_16u_q23(b) / 8388608.0f); }       /* soft-float: the compiler turns /2^23 into *2^-23,
+                                     so __floatsisf + __mulsf3 remain */
 NOINL static uint32_t q_A3_16u_intfloat(uint32_t b)
 { return logq_q23_to_f32bits(logq_A3_16u_q23(b)); }          /* integer only   */
 

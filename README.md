@@ -68,7 +68,8 @@ cmake -S . -B build && cmake --build build -j && ctest --test-dir build
 ./build/test_baselines > results/baselines_exhaustive.csv
 ./build/bench_host > results/host_x86_64.csv
 python3 tools/make_tables.py paper/gen              # tables and numbers of the paper
-# instruction counts on RV32IM and Cortex-M0 (Unicorn emulator, soft-float):
+# instruction counts on RV32IM and Cortex-M0 (Unicorn emulator, soft-float);
+# clock cycles on an ESP32-C3 board: see bench/hw/esp32c3/README.md
 BUILTINS=/path/to/llvm-project/compiler-rt/lib/builtins sh bench/build_mcu.sh
 cc -O2 -DHOST_REFERENCE -Iinclude -o bench/build/host_ref bench/mcu_funcs.c -lm
 pip install unicorn && python3 bench/emu.py
@@ -83,6 +84,7 @@ pip install unicorn && python3 bench/emu.py
 | `tests/test_q31_ln.c` | natural log of every Q31 input against CMSIS-DSP `arm_vlog_q31` |
 | `tests/test_baselines.c` | the same measures for the comparison functions in `baselines/` |
 | `bench/emu.py` | executed instructions and code footprint; every emulated result checked bit-for-bit against the host |
+| `bench/hw/esp32c3/` | clock cycles on a real ESP32-C3 (ESP-IDF or Arduino IDE); every result checked against the PC by checksums |
 
 ## Repository layout
 
@@ -91,7 +93,7 @@ pip install unicorn && python3 bench/emu.py
 | `include/` | `logq.h` and the generated `logq_tables.h` |
 | `tools/` | generator `logqgen.py`, reproducibility check |
 | `tests/` | exhaustive tests |
-| `bench/` | MCU emulation, cross-compilation script, host benchmark |
+| `bench/` | MCU emulation, cross-compilation script, host benchmark, ESP32-C3 hardware benchmark (`bench/hw/esp32c3`) |
 | `examples/` | integer dB meter, generated single-variant header |
 | `baselines/` | third-party `log2f`/`log` implementations and the 2023 algorithms, each under its own licence |
 | `results/` | result files cited in the paper |
@@ -112,3 +114,5 @@ version 1.0 on hosts with hardware floating point.
 
 MIT (see `LICENSE`); third-party files in `baselines/` keep their own licences.
 See `CITATION.cff` for how to cite.
+
+

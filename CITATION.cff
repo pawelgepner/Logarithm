@@ -6,22 +6,34 @@ date-released: 2026-11-17
 license: MIT
 repository-code: "https://github.com/pawelgepner/Logarithm"
 authors:
+  - family-names: Deelman
+    given-names: Ewa
+    affiliation: "University of Southern California, Information Sciences Institute"
   - family-names: Gepner
     given-names: Paweł
     affiliation: Warsaw University of Technology
   - family-names: Moroz
     given-names: Leonid
     affiliation: Warsaw University of Technology
-  - family-names: Samotyy
-    given-names: Volodymyr
-    affiliation: Cracow University of Technology
-  - family-names: Kokosiński
-    given-names: Zbigniew
-    affiliation: Cracow University of Technology
-  - family-names: Gavkalova
-    given-names: Nataliia
-    affiliation: Warsaw University of Technology
-  - family-names: Kocot
-    given-names: Bartłomiej
-    affiliation: AMD Inc.
+  - family-names: Poczekajło
+    given-names: Paweł
+    affiliation: Koszalin University of Technology
 keywords: [logarithm, fixed-point arithmetic, microcontroller, RISC-V, Cortex-M, elementary functions]
+references:
+  - type: article
+    title: "Innovative simple yet efficient algorithms of logarithms with adjustable accuracy"
+    notes: "Research Square preprint, 2023; original code under tag v0.1-preprint and in baselines/legacy/"
+    authors:
+      - family-names: Gepner
+        given-names: Paweł
+      - family-names: Moroz
+        given-names: Leonid
+      - family-names: Samotyy
+        given-names: Volodymyr
+      - family-names: Kokosiński
+        given-names: Zbigniew
+      - family-names: Gavkalova
+        given-names: Nataliia
+      - family-names: Kocot
+        given-names: Bartłomiej
+    year: 2023

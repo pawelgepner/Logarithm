@@ -12,3 +12,13 @@ paper/*.pdf
 paper/elsarticle.cls
 __pycache__/
 .DS_Store
+
+# copies made by bench/hw/esp32c3/arduino/make_sketch.py
+bench/hw/esp32c3/arduino/log2_v3_esp32c3/*.h
+bench/hw/esp32c3/arduino/log2_v3_esp32c3/bench_core.c
+bench/hw/esp32c3/arduino/log2_v3_esp32c3/aor_log2f.c
+bench/hw/esp32c3/arduino/log2_v3_esp32c3/fbsd_log2f.c
+bench/hw/esp32c3/arduino/log2_v3_esp32c3/cmsis_log_q31.c
+# ESP-IDF build output
+bench/hw/esp32c3/sdkconfig
+bench/hw/esp32c3/sdkconfig.old

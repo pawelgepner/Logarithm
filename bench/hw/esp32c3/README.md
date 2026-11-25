@@ -7,14 +7,17 @@ every function returns exactly the results computed on a PC (checksums in
 
 Measured functions: six logq variants (binary32 in/out, full domain); the
 A3_16u fixed-point result alone and converted to float in two ways (soft-float
-division vs integer-only packing); A2_16u kernel, fixed-point and integer
+arithmetic vs integer-only packing); A2_16u kernel, fixed-point and integer
 entry points; natural log of Q31 (logq vs CMSIS-DSP); `log2f` of the
 toolchain's libm, of Arm Optimized Routines and of FreeBSD; three algorithms of
 the 2023 preprint.
 
 ## Run
 
-Requires ESP-IDF 5.x (tested API: `esp_cpu_get_cycle_count`).
+Requires an installed ESP-IDF 5.x (tested: 5.5.5). The `idf.py` command comes
+with the ESP-IDF installation, not with this project; see the ESP-IDF
+*Get Started* guide for ESP32-C3. To build with the Arduino IDE instead, see
+[`arduino/`](arduino/README.md).
 
 ```sh
 cd bench/hw/esp32c3
@@ -42,6 +45,12 @@ Please send back `hw_esp32c3.csv`, `sizes_esp32c3.txt`, the ESP-IDF version
 - Columns: `mean/min/max_cycles_net` are cycles per call minus the mean cost of
   an empty call (`empty_call`, first row). Each function runs twice over the
   inputs with interrupts disabled; the second pass is reported.
+- The project is compiled with `-O2` (`main/CMakeLists.txt`,
+  `CONFIG_COMPILER_OPTIMIZATION_PERF`), as in the emulation. The toolchain's
+  `log2f` and the soft-float routines of libgcc are precompiled.
+- `q_A3_16u_softfloat` divides by 2^23 in the source; the compiler replaces
+  this by an exact multiplication, so the measured overhead is `__floatsisf`
+  plus `__mulsf3`, not a division.
 - `b_libm_log2f` is the toolchain's own `log2f` (newlib); its checksum is not
   compared because different libraries round differently.
 - The files `logq.h`, `logq_tables.h` and those from `baselines/` are copies
@@ -49,4 +58,4 @@ Please send back `hw_esp32c3.csv`, `sizes_esp32c3.txt`, the ESP-IDF version
   `host_main.c` regenerate `inputs.h` and `expected.h`:
   `python3 make_inputs.py && cc -O2 -ffp-contract=off -Imain host_main.c main/bench_core.c -lm -o hb && ./hb > main/expected.h`
 - Porting to another board: replace `main.c` (four functions: cycle counter,
-  interrupts off/on, pause).
+  interrupts off/on, pause); `arduino/` is an example of such a port.

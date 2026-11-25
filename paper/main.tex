@@ -38,7 +38,7 @@ floating point. logq is a header-only C99 library and a generator that produce
 binary logarithms using integer operations only. A family of piecewise minimax
 polynomials, tunable in degree and number of segments, returns log$_2$ in
 fixed point with a guaranteed absolute error between \numEmax{} and
-\numEmin{}; a second family bounds the relative error, down to 0.54~ulp of
+\numEmin{}; a second family bounds the relative error, down to 0.52~ulp of
 binary32. The generator verifies every variant it emits on all $2^{23}$
 significands, and the test suite checks every positive binary32 input. \authors {On
 RV32IM and Cortex-M0 a full-domain binary32 logarithm takes \numinsmin--\numinsmax{}
@@ -318,13 +318,15 @@ Function & Max.\ error & RMS error & RV32IM & Cortex-M0 & Bytes (M0) \\
 \subsection{Measurements on a microcontroller}
 The library was also run on a Waveshare ESP32-C3-Zero board (ESP32-C3FH4,
 RV32IMC, 160~MHz, no FPU) with ESP-IDF v5.5.5, built through the Arduino core
-for ESP32 \authors{compiler version and optimisation flags}. In a first
+for ESP32 3.3.12 with GCC 14.2.0 \authors{the numbers below come from a build
+at \texttt{-Og}; replace them with the rerun at \texttt{-O2}, the flags of the
+ESP-IDF project and of the emulation}. In a first
 experiment the kernel of \texttt{A3\_16u} was evaluated on all $2^{23}$
 significands; its results are bit for bit identical to those on a PC, with the
 same maximum error of $9.86\cdot10^{-8}$. The benchmark in
 \texttt{bench/hw/esp32c3} then runs 20 functions on the same 1000 inputs as
 the emulation (Table~\ref{tab:esp}). Cycles are read from the core's cycle
-counter and the cost of an empty call is subtracted. For every function except
+counter with interrupts disabled, and the cost of an empty call is subtracted. For every function except
 the C library \texttt{log2f}, whose implementation differs between the board
 and the PC, the board compares a checksum of its 1000 results with the value
 computed on the PC; all 20 checksums match.
@@ -382,9 +384,10 @@ same function over the full domain about five times faster. In this build the
 \texttt{A3\_16u} kernel takes 152 bytes of code and 256 bytes of tables.
 
 Converting the Q8.23 result to binary32 in the usual way,
-\texttt{q * (1.0f / 8388608.0f)}, raises the cost of \texttt{A3\_16u} from 87
-to 303 cycles. No division is executed: the compiler folds $1/2^{23}$ into a
-constant at compile time. The overhead of 216 cycles, two and a half times the
+\texttt{(float)q / 8388608.0f}, raises the cost of \texttt{A3\_16u} from 87
+to 303 cycles. No division is executed: because $2^{-23}$ is exact, the
+compiler replaces the division by a multiplication by this constant at
+compile time, as the disassembly of the benchmark confirms. The overhead of 216 cycles, two and a half times the
 cost of the logarithm, comes from the two soft-float routines that remain, the
 integer-to-float conversion (\texttt{\_\_floatsisf}) and the multiplication
 (\texttt{\_\_mulsf3}). Packing the result with integer operations, as
