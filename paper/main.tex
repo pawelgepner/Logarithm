@@ -44,8 +44,8 @@ significands, and the test suite checks every positive binary32 input. \authors 
 RV32IM and Cortex-M0 a full-domain binary32 logarithm takes \numinsmin--\numinsmax{}
 instructions, \numratmin--\numratmax{} times fewer than \texttt{log2f}.}
 On an ESP32-C3 microcontroller (RV32IMC) a full-domain binary32 logarithm
-takes 164--230 clock cycles, 10--22 times fewer than three \texttt{log2f}
-implementations, and a fixed-point one 73--87 cycles.
+takes 134--209 clock cycles, 11--26 times fewer than three \texttt{log2f}
+implementations, and a fixed-point one 53--64 cycles.
 \end{abstract}
 
 \begin{keyword}
@@ -318,9 +318,9 @@ Function & Max.\ error & RMS error & RV32IM & Cortex-M0 & Bytes (M0) \\
 \subsection{Measurements on a microcontroller}
 The library was also run on a Waveshare ESP32-C3-Zero board (ESP32-C3FH4,
 RV32IMC, 160~MHz, no FPU) with ESP-IDF v5.5.5, built through the Arduino core
-for ESP32 3.3.12 with GCC 14.2.0 \authors{the numbers below come from a build
-at \texttt{-Og}; replace them with the rerun at \texttt{-O2}, the flags of the
-ESP-IDF project and of the emulation}. In a first
+for ESP32 3.3.12 with GCC 14.2.0 at \texttt{-Os}, the optimisation level of
+the precompiled C library and soft-float routines (the emulation uses
+\texttt{-O2}). In a first
 experiment the kernel of \texttt{A3\_16u} was evaluated on all $2^{23}$
 significands; its results are bit for bit identical to those on a PC, with the
 same maximum error of $9.86\cdot10^{-8}$. The benchmark in
@@ -342,58 +342,58 @@ of all functions except $^{a}$ are checked against the PC.}
 Function & Result & Mean & Range \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{logq, fixed point}}\\
-\texttt{A2\_16u} kernel, $\log_2(1+m)$ & Q23 & 59.0 & 59 \\
-\texttt{A2\_16u}, normal binary32 input & Q8.23 & 73.0 & 73 \\
-\texttt{A3\_16u}, normal binary32 input & Q8.23 & 87.0 & 87 \\
-\texttt{A2\_16u}, \texttt{uint32} input & Q8.23 & 103.3 & 101--106 \\
-\texttt{A3\_16u}, $\ln$ of a Q31 input & q5.26 & 134.0 & 132--137 \\
+\texttt{A2\_16u} kernel, $\log_2(1+m)$ & Q23 & 40.0 & 40 \\
+\texttt{A2\_16u}, normal binary32 input & Q8.23 & 53.0 & 53 \\
+\texttt{A3\_16u}, normal binary32 input & Q8.23 & 64.0 & 64 \\
+\texttt{A2\_16u}, \texttt{uint32} input & Q8.23 & 83.3 & 81--86 \\
+\texttt{A3\_16u}, $\ln$ of a Q31 input & q5.26 & 104.0 & 102--107 \\
 \multicolumn{4}{@{}l}{\emph{logq, Q8.23 result of \texttt{A3\_16u} converted to binary32}}\\
-by soft-float arithmetic & binary32 & 303.0 & 281--311 \\
-by integer packing & binary32 & 165.7 & 162--172 \\
+by soft-float arithmetic & binary32 & 287.0 & 265--295 \\
+by integer packing & binary32 & 136.7 & 136--137 \\
 \multicolumn{4}{@{}l}{\emph{logq, full binary32 domain}}\\
-\texttt{A1\_16u} & binary32 & 163.6 & 160--170 \\
-\texttt{A2\_16u} & binary32 & 186.7 & 183--193 \\
-\texttt{A2\_16g} & binary32 & 225.6 & 218--236 \\
-\texttt{A3\_16u} & binary32 & 200.7 & 197--207 \\
-\texttt{R3\_16} & binary32 & 228.2 & 219--241 \\
-\texttt{R3\_32} & binary32 & 229.6 & 220--241 \\
+\texttt{A1\_16u} & binary32 & 133.8 & 133--134 \\
+\texttt{A2\_16u} & binary32 & 152.7 & 152--153 \\
+\texttt{A2\_16g} & binary32 & 178.2 & 175--180 \\
+\texttt{A3\_16u} & binary32 & 161.7 & 161--162 \\
+\texttt{R3\_16} & binary32 & 207.7 & 200--215 \\
+\texttt{R3\_32} & binary32 & 208.7 & 200--215 \\
 \multicolumn{4}{@{}l}{\emph{other implementations}}\\
 \texttt{log2f}, toolchain C library (newlib)$^{a}$ & binary32 & 3408.3 & 2885--3782 \\
-\texttt{log2f}, Arm Optimized Routines & binary32 & 2406.3 & 2319--2467 \\
-\texttt{log2f}, FreeBSD & binary32 & 3573.0 & 3474--3668 \\
-CMSIS-DSP \texttt{arm\_vlog\_q31} & q5.26 & 599.8 & 569--621 \\
+\texttt{log2f}, Arm Optimized Routines & binary32 & 2374.4 & 2301--2436 \\
+\texttt{log2f}, FreeBSD & binary32 & 3299.6 & 3201--3395 \\
+CMSIS-DSP \texttt{arm\_vlog\_q31} & q5.26 & 579.0 & 577--582 \\
 \multicolumn{4}{@{}l}{\emph{algorithms of the 2023 preprint \cite{gepner2023preprint}}}\\
-Mitchell & binary32 & 182.5 & 131--217 \\
-\texttt{log2\_P2\_16} & binary32 & 899.7 & 855--979 \\
-\texttt{log2\_P3\_16} & binary32 & 989.3 & 921--1058 \\
+Mitchell & binary32 & 172.5 & 121--207 \\
+\texttt{log2\_P2\_16} & binary32 & 875.7 & 831--955 \\
+\texttt{log2\_P3\_16} & binary32 & 964.3 & 896--1033 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ratios measured in emulation hold on the board in clock cycles. A
-full-domain binary32 logarithm from logq takes 164--230 cycles, 10--15 times
-fewer than the Arm Optimized Routines \texttt{log2f}, 15--21 times fewer than
-the toolchain's \texttt{log2f} and 16--22 times fewer than the FreeBSD one.
+full-domain binary32 logarithm from logq takes 134--209 cycles, 11--18 times
+fewer than the Arm Optimized Routines \texttt{log2f}, 16--25 times fewer than
+the FreeBSD one and 16--26 times fewer than the toolchain's \texttt{log2f}.
 \texttt{R3\_32} returns the same results as the Arm Optimized Routines on all
-1000 inputs at about a tenth of the cost. A fixed-point result from a normal
-binary32 input takes 73--87 cycles, 39--47 times fewer than the toolchain's
-\texttt{log2f}, and the natural logarithm of a Q31 input is 4.5 times cheaper
-than with CMSIS-DSP. The algorithms of the 2023 preprint, which use
-floating-point operations, need 900--990 cycles; \texttt{A3\_16u} computes the
-same function over the full domain about five times faster. In this build the
-\texttt{A3\_16u} kernel takes 152 bytes of code and 256 bytes of tables.
+1000 inputs at less than a tenth of the cost. A fixed-point result from a
+normal binary32 input takes 53--64 cycles, 53--64 times fewer than the
+toolchain's \texttt{log2f}, and the natural logarithm of a Q31 input is 5.6
+times cheaper than with CMSIS-DSP. The algorithms of the 2023 preprint, which use
+floating-point operations, need 880--960 cycles; \texttt{A3\_16u} computes the
+same function over the full domain about six times faster. In this build the
+\texttt{A3\_16u} kernel takes 86 bytes of code and 256 bytes of tables.
 
 Converting the Q8.23 result to binary32 in the usual way,
-\texttt{(float)q / 8388608.0f}, raises the cost of \texttt{A3\_16u} from 87
-to 303 cycles. No division is executed: because $2^{-23}$ is exact, the
+\texttt{(float)q / 8388608.0f}, raises the cost of \texttt{A3\_16u} from 64
+to 287 cycles. No division is executed: because $2^{-23}$ is exact, the
 compiler replaces the division by a multiplication by this constant at
-compile time, as the disassembly of the benchmark confirms. The overhead of 216 cycles, two and a half times the
-cost of the logarithm, comes from the two soft-float routines that remain, the
+compile time, as the disassembly of the benchmark confirms. The overhead of 223 cycles, three and a half times
+the cost of the logarithm, comes from the two soft-float routines that remain, the
 integer-to-float conversion (\texttt{\_\_floatsisf}) and the multiplication
 (\texttt{\_\_mulsf3}). Packing the result with integer operations, as
 \texttt{logq\_V\_f32bits} does, normalises the Q8.23 value, applies the
 scaling by $2^{-23}$ as a subtraction from the exponent and rounds the
-significand to nearest even. It costs 79 cycles, 2.7 times less, and gives the
+significand to nearest even. It costs 73 cycles, three times less, and gives the
 same results as the soft-float path on all 1000 inputs (the checksums of both
 paths and of the full-domain \texttt{A3\_16u} are identical). On cores without
 an FPU it therefore pays to keep the computation in fixed point and, where a
@@ -435,7 +435,7 @@ point, logq is not faster than the C library (on an x86-64 host it is
 \numhostmin--\numhostmax{} times slower, \texttt{results/host\_x86\_64.csv}). Instruction counts
 are not cycle counts: they ignore memory wait states and multiplier latency.
 Measurements on an ESP32-C3 board confirm these ratios on a real core in
-clock cycles: 10--22 times for a full-domain binary32 logarithm. \authors{Add a Cortex-M0+ board and energy per call.}
+clock cycles: 11--26 times for a full-domain binary32 logarithm. \authors{Add a Cortex-M0+ board and energy per call.}
 
 \section{Conclusions}
 
@@ -444,8 +444,8 @@ user and whose worst-case error is verified exhaustively for every variant it
 emits. \authors{On RV32IM and Cortex-M0 a full-domain binary32 logarithm costs
 \numinsmin--\numinsmax{} instructions, \numratmin--\numratmax{} times fewer than \texttt{log2f} with
 soft-float, and a fixed-point result for an integer input as little as \numintrv.} On an
-ESP32-C3 board a full-domain binary32 logarithm takes 164--230 cycles and a
-fixed-point one 73--87, 10--47 times fewer than \texttt{log2f}, with results
+ESP32-C3 board a full-domain binary32 logarithm takes 134--209 cycles and a
+fixed-point one 53--64, 11--64 times fewer than \texttt{log2f}, with results
 identical to those on a PC. The software,
 including the generator, the exhaustive tests, the emulation harness and the
 scripts that produce every number in this paper, is available under the MIT

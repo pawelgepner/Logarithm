@@ -26,6 +26,13 @@ void setup()
                   ESP_ARDUINO_VERSION_MINOR, ESP_ARDUINO_VERSION_PATCH);
     Serial.print("Compiler: GCC ");
     Serial.println(__VERSION__);
+#if defined(__OPTIMIZE_SIZE__)
+    Serial.println("opt: -Os");
+#elif defined(__OPTIMIZE__)
+    Serial.println("opt: -O1/-O2/-O3");
+#else
+    Serial.println("opt: none (-O0/-Og)");
+#endif
     Serial.print("Board: ");
     Serial.println(BOARD_NAME);
 

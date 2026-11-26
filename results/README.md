@@ -14,4 +14,6 @@ guest, 2 cores; emulation: clang 18.1.3, compiler-rt 18.1.3, Unicorn 2.1.4).
 | `q31_ln_vs_cmsis.csv` | `tests/test_q31_ln.c` | natural log of all Q31 inputs, logq vs CMSIS-DSP |
 | `r3_32_vs_aor.txt` | `tests/test_r3_vs_aor.c` | R3_32 vs Arm Optimized Routines log2f, bit for bit, all positive binary32 |
 | `mcu_instructions.csv` | `bench/emu.py --n 1000` | executed instructions and footprint on RV32IM and Cortex-M0 |
+| `hw_esp32c3.csv` | `bench/hw/esp32c3` on a Waveshare ESP32-C3-Zero (`-Os`) | clock cycles per call on a real ESP32-C3, results checked against the PC by checksums |
+| `sizes_esp32c3.txt` | `riscv32-esp-elf-nm` on the same build | code and table sizes in bytes |
 | `host_x86_64.csv` | `bench/bench_host.c` | ns per call on the host (reference only) |

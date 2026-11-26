@@ -15,6 +15,7 @@ __pycache__/
 
 # copies made by bench/hw/esp32c3/arduino/make_sketch.py
 bench/hw/esp32c3/arduino/log2_v3_esp32c3/*.h
+!bench/hw/esp32c3/arduino/log2_v3_esp32c3/build_opt.h
 bench/hw/esp32c3/arduino/log2_v3_esp32c3/bench_core.c
 bench/hw/esp32c3/arduino/log2_v3_esp32c3/aor_log2f.c
 bench/hw/esp32c3/arduino/log2_v3_esp32c3/fbsd_log2f.c

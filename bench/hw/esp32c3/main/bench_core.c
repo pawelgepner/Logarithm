@@ -8,11 +8,6 @@
  * and an FNV-1a checksum of all 1000 results compared with the value computed
  * on a PC (expected.h).  Output: lines starting with "CSV," on the console.
  */
-#if defined(ARDUINO) && !defined(LOGQ_BENCH_KEEP_FLAGS)
-/* The Arduino IDE may build sketches with -Og (Sketch > Optimize for
- * Debugging).  Force the -O2 used by the ESP-IDF project and the emulation. */
-#pragma GCC optimize ("O2")
-#endif
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>

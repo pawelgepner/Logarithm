@@ -19,12 +19,11 @@ Waveshare ESP32-C3-Zero.
 
 ## Optimisation level
 
-With **Sketch → Optimize for Debugging** enabled the Arduino IDE compiles with
-`-Og -g3`. `bench_core.c` therefore forces `-O2` with
-`#pragma GCC optimize ("O2")` when it is built by the Arduino IDE (define
-`LOGQ_BENCH_KEEP_FLAGS` to disable this), so that the results are comparable
-with the ESP-IDF project and the emulation. The toolchain's `log2f` and the
-soft-float routines are precompiled and are not affected.
+The Arduino-ESP32 core may compile sketches with `-Og -g3`. The file
+`build_opt.h` in the sketch folder adds `-Os` to the command line, after the
+default flags, so the benchmark is built at `-Os`, like the precompiled C
+library and soft-float routines it is compared with, and like the ESP-IDF
+project. The sketch prints the level it was built with (`opt: -Os`).
 
 ## Code sizes
 

@@ -45,9 +45,10 @@ Please send back `hw_esp32c3.csv`, `sizes_esp32c3.txt`, the ESP-IDF version
 - Columns: `mean/min/max_cycles_net` are cycles per call minus the mean cost of
   an empty call (`empty_call`, first row). Each function runs twice over the
   inputs with interrupts disabled; the second pass is reported.
-- The project is compiled with `-O2` (`main/CMakeLists.txt`,
-  `CONFIG_COMPILER_OPTIMIZATION_PERF`), as in the emulation. The toolchain's
-  `log2f` and the soft-float routines of libgcc are precompiled.
+- The project is compiled with `-Os` (`main/CMakeLists.txt`,
+  `CONFIG_COMPILER_OPTIMIZATION_SIZE`), the level of the precompiled
+  toolchain `log2f` and soft-float routines; the emulation uses `-O2`.
+  Results of the paper: `results/hw_esp32c3.csv`.
 - `q_A3_16u_softfloat` divides by 2^23 in the source; the compiler replaces
   this by an exact multiplication, so the measured overhead is `__floatsisf`
   plus `__mulsf3`, not a division.

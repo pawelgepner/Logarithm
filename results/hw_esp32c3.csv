@@ -1,0 +1,23 @@
+# ESP32-C3 (Waveshare ESP32-C3-Zero, ESP32-C3FH4, 160 MHz), ESP-IDF v5.5.5 via Arduino-ESP32 3.3.12, GCC 14.2.0 -Os; measured by P. Poczekajlo, 2026-11-26
+board,mhz,function,input,mean_cycles_net,min_cycles_net,max_cycles_net,checksum,expected,match
+esp32c3,160,empty_call,float,0.0,-0,1,0x78B9B205,0x78B9B205,yes
+esp32c3,160,f_A1_16u,float,133.8,133,134,0xCB64C1B4,0xCB64C1B4,yes
+esp32c3,160,f_A2_16u,float,152.7,152,153,0xEB10A26B,0xEB10A26B,yes
+esp32c3,160,f_A2_16g,float,178.2,175,180,0x5A700600,0x5A700600,yes
+esp32c3,160,f_A3_16u,float,161.7,161,162,0x098C7EED,0x098C7EED,yes
+esp32c3,160,f_R3_16,float,207.7,200,215,0x48E120F1,0x48E120F1,yes
+esp32c3,160,f_R3_32,float,208.7,200,215,0x91CD2F75,0x91CD2F75,yes
+esp32c3,160,q_A3_16u,float,64.0,64,64,0xB3201591,0xB3201591,yes
+esp32c3,160,q_A3_16u_softfloat,float,287.0,265,295,0x098C7EED,0x098C7EED,yes
+esp32c3,160,q_A3_16u_intfloat,float,136.7,136,137,0x098C7EED,0x098C7EED,yes
+esp32c3,160,k_A2_16u,frac,40.0,40,40,0x1C100510,0x1C100510,yes
+esp32c3,160,q_A2_16u,float,53.0,53,53,0xFFD1190C,0xFFD1190C,yes
+esp32c3,160,u_A2_16u,u32,83.3,81,86,0xD992F056,0xD992F056,yes
+esp32c3,160,ln_A3_16u,q31,104.0,102,107,0xB8CC7EE2,0xB8CC7EE2,yes
+esp32c3,160,b_cmsis_log_q31,q31,579.0,577,582,0xEB5E1173,0xEB5E1173,yes
+esp32c3,160,b_libm_log2f,float,3408.3,2885,3782,0x7F82D7BF,0x00000000,n/a
+esp32c3,160,b_aor_log2f,float,2374.4,2301,2436,0x91CD2F75,0x91CD2F75,yes
+esp32c3,160,b_fbsd_log2f,float,3299.6,3201,3395,0xD91EBE05,0xD91EBE05,yes
+esp32c3,160,l_log2_Mitchell,float,172.5,121,207,0xF00C8B75,0xF00C8B75,yes
+esp32c3,160,l_log2_P2_16,float,875.7,831,955,0x78F458C5,0x78F458C5,yes
+esp32c3,160,l_log2_P3_16,float,964.3,896,1033,0xE830707F,0xE830707F,yes
